@@ -58,37 +58,39 @@ public class ListFragment extends Fragment {
 //            public void onCancelled(DatabaseError databaseError) {
 //            }
 //        });
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fireapp-12b506.firebaseio.com/museums");
-        ref.addChildEventListener(new ChildEventListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        if(museums.isEmpty()) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fireapp-12b506.firebaseio.com/museums");
 
-                Museum m = dataSnapshot.getValue(Museum.class);
-                 museums.add(m);
-                 musemsTree.put(m.getUi(), m);
-                //museums.sort(new Comparator<Museum>() {
-                //    @Override
-                //    public int compare(Museum o1, Museum o2) {
-                //        return o1.getMname().compareTo(o2.getMname());
-                //    }
-                //});
-                 museumAdapter.notifyDataSetChanged();
-                 //Log.d("Museumilos", m.getUi());
+            ref.addChildEventListener(new ChildEventListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-            }
+                    Museum m = dataSnapshot.getValue(Museum.class);
+                    museums.add(m);
+                    musemsTree.put(m.getUi(), m);
+                    //museums.sort(new Comparator<Museum>() {
+                    //    @Override
+                    //    public int compare(Museum o1, Museum o2) {
+                    //        return o1.getMname().compareTo(o2.getMname());
+                    //    }
+                    //});
+                    museumAdapter.notifyDataSetChanged();
+                    //Log.d("Museumilos", m.getUi());
 
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Museum changedMuseum = dataSnapshot.getValue(Museum.class);
-                String key = changedMuseum.getUi();
-                Museum sourceMuseum = musemsTree.get(key);
-                musemsTree.put(key, changedMuseum);
-                changedMuseum.setUi(key);
-                int index = museums.indexOf(sourceMuseum);
-                museums.set(index, changedMuseum);
-                museumAdapter.notifyDataSetChanged();
+                }
+
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    Museum changedMuseum = dataSnapshot.getValue(Museum.class);
+                    String key = changedMuseum.getUi();
+                    Museum sourceMuseum = musemsTree.get(key);
+                    musemsTree.put(key, changedMuseum);
+                    changedMuseum.setUi(key);
+                    int index = museums.indexOf(sourceMuseum);
+                    museums.set(index, changedMuseum);
+                    museumAdapter.notifyDataSetChanged();
 //                Museum m = dataSnapshot.getValue(Museum.class);
 //                String digitalKey = m.getUi();
 //                Museum surcM = musemsTree.get(digitalKey);
@@ -107,28 +109,27 @@ public class ListFragment extends Fragment {
 //                museumAdapter.notifyDataSetChanged();
 
 
+                }
 
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Museum removedMuseum = dataSnapshot.getValue(Museum.class);
+                    museums.remove(removedMuseum);
+                    museumAdapter.notifyDataSetChanged();
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Museum removedMuseum = dataSnapshot.getValue(Museum.class);
-                museums.remove(removedMuseum);
-                museumAdapter.notifyDataSetChanged();
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Не удаётся получить доступ к базе данных. Пожалуйста, проверьте подключение к интернету.", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getContext(), "Не удаётся получить доступ к базе данных. Пожалуйста, проверьте подключение к интернету.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
 //        museums.add(new Museum("Музей природы Среднего Урала", "Горького, 4а", "3712113", "https://cdn00.mir.afisha.ru/imgs/2016/04/13/14/4907/40333dfdee4e8341d826560793d26c54a9f8650b.jpg", "www.uole-museum.ru/museums/muzej-prirody-urala/", "Музей природы – старейшая среди площадок Свердловского областного краеведческого музея. За 146 лет его сотрудники собрали богатую естественнонаучную коллекцию – свыше 60 тысяч предметов. ", 56.837319,60.605603));
 //        museums.add(new Museum("Уральский минералогический музей", "Красноармейская, 1", "3506019", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Гостиница_%22Большой_Урал%22.JPG/280px-Гостиница_%22Большой_Урал%22.JPG", "www.pelepenko-va.ru/", "Частный минералогический музей, располагавшийся в Екатеринбурге с 2000 до 2015 года в здании гостиницы \"Большой Урал\". С 2017 года находится в Первоуральске в Инновационном культурном центре (известен как \"шайба\")", 56.830218,60.600843));
